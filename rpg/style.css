@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+
+:root {
+    --bg: #09090e;
+    --panel: #0f0f1a;
+    --border: #1e1e3a;
+    --text: #c8d0e0;
+    --dim: #5a6070;
+    --accent: #4fc3f7;
+    --danger: #ef5350;
+    --gold: #ffd54f;
+    --success: #66bb6a;
+    --mono: 'Share Tech Mono', monospace;
+}
