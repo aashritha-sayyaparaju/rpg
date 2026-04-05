@@ -68,7 +68,7 @@ const enemies = {
 const shopItems = [
     { name: "Health Potion", cost: 15, effect: () => { heal(40); log("You drink the potion. +40 HP.", "heal");}},
     { name: "Iron Sword", cost: 25, effect: () => { player.atk += 5; log("You equip the Iron Sword. ATK +5.", "loot");}},
-    { name: "Reinforced Armor," cost: 30, effect: () => { player.maxHp += 30; player.hp += 30; log("You put on the armor. Max HP + 30.", "heal");}},
+    { name: "Reinforced Armor", cost: 30, effect: () => { player.maxHp += 30; player.hp += 30; log("You put on the armor. Max HP + 30.", "heal");}},
     { name: "Lucky Charm", cost: 20, effect: () => { player.flags.add("lucky"); log("The charm hums. You feel luckier.", "loot");}},
 ];
 
@@ -100,12 +100,12 @@ function separator() {
 }
 
 function updateStats() {
-    document.getElementsById("stat-hp").textContent = player.hp;
+    document.getElementById("stat-hp").textContent = player.hp;
     document.getElementById("stat-maxhp").textContent = player.maxHp;
     document.getElementById("stat-atk").textContent = player.atk;
     document.getElementById("stat-gold").textContent = player.gold;
-    document.getElementById("stat-floor").textContent = player.inventory.length > 0 ? player.inventory.join(", ") : "empty";
-
+    document.getElementById("stat-floor").textContent = player.floor;
+    document.getElementById("inventory-items").textContent = player.inventory.length > 0 ? player.inventory.join(", ") : "empty";
 
     const hpEl = document.getElementById("stat-hp");
     hpEl.style.color = player.hp <= 25
@@ -190,7 +190,7 @@ function startCombat(enemyKey, onWin, onLose) {
         //enemy fights back
 
         const enemyDmg = rand(Math.floor(enemy.atk * 0.8), Math.ceil(enemy.atk * 1.2));
-        player.hp -= enemy.Dmg;
+        player.hp -= enemyDmg;
         log(`The ${enemy.name} hits you for ${enemyDmg} damage. Your HP: ${player.hp}`, "combat");
         updateStats();
 
@@ -208,7 +208,7 @@ function startCombat(enemyKey, onWin, onLose) {
         if (!hasPotion) {
             log("You have no potions.", "dim");
             combatTurn();
-            return();
+            return;
         }
 
         player.inventory.splice(player.inventory.indexOf("Health Potion"), 1);
@@ -496,7 +496,7 @@ function floor3() {
                     {
                         label: "Fight the troll",
                         action: () => startCombat("troll", floor3_continue, floor3_continue),
-                        danger: true;
+                        danger: true,
                     }
                 ]);
             }
@@ -528,7 +528,7 @@ function floor3() {
                     {
                         label: "Refuse and fight her",
                         action: () => startCombat("witch", floor3_continue, floor3_continue),
-                        danger: true;
+                        danger: true,
                     },
                     {
                         label: "Walk away",
@@ -548,26 +548,25 @@ function floor3_continue() {
     separator();
     log("You find the staircase down after what feels like an hour of wandering.", "scene");
     renderChoices([
-    {
-        renderChoices([
-            {
-                label: "Descend to floor 4",
-                action: () => { player.floor = 4; updateStats(); floor4(); }
-            },
-            {
-                label: "Rest here (+20 HP)",
-                action: () => {
-                    heal(20);
-                    log("You sit in the dark for a while. HP recovered.", "heal");
-                    updateStats();
-                    renderChoices([{
-                        label: "Descend to floor 4",
-                        action: () => { player.floor = 4; updateStats(); floor4(); } 
-                    }]);
-                }
+        {
+            label: "Descend to floor 4",
+            action: () => { player.floor = 4; updateStats(); floor4(); }
+        },
+        {
+            label: "Rest here (+20 HP)",
+            action: () => {
+                heal(20);
+                log("You sit in the dark for a while. HP recovered.", "heal");
+                updateStats();
+                renderChoices([{
+                    label: "Descend to floor 4",
+                    action: () => { player.floor = 4; updateStats(); floor4(); }
+                }]);
             }
-        ]);
-    }
+        }
+    ]);
+}
+
 
 
     function floor4() {
@@ -590,9 +589,9 @@ function floor3_continue() {
                             floor4_continue();
                         },
                         () => floor4_continue()
-                            );
+                     );
                 }
-            };
+            },
 
             {
                 label: "Enter the shrine",
@@ -601,15 +600,160 @@ function floor3_continue() {
                     renderChoices([
                         {
                             label: "Drink the vial",
+                            action: () => {
+                                const effect = Math.random();
+                                if (effect > 0.4) {
+                                    player.maxHp += 25;
+                                    heal(25);
+                                    log("The liquid burns going down. Max HP + 25.", "heal");
+                                } else {
+                                    player.atk -= 2;
+                                    log("It tastes like regret. ATK -2.", "combat");
+                                }
+                                updateStats();
+                                floor4_continue();
+                            }
+                        },
+                        {
+                            label: "Leave it alone",
+                            action: () => {
+                                log("You back away slowly. The wise choice, probably.", "dim");
+                                floor4_continue();
+                            }
                         }
-                    ])
+                    ]);
+                }
+            },
+
+            {
+                label: "Enter the armory",
+                action: () => {
+                    log("A proper armory, not like the one upstairs. Weapons still in good shape.", "scene");
+                    if (!player.inventory.includes("Iron Sword")) {
+                        player.atk += 7;
+                        player.inventory.push("Iron Sword");
+                        updateStats();
+                        log("You take an Iron Sword. ATK +7", "loot");
+                    } else {
+                        log("You already have a sword. You take a whetstone and sharpen it. ATK +2", "loot");
+                        player.atk += 2;
+                        updateStats();
+                    }
+                    floor4_continue();
                 }
             }
-        ])
+        ]);
     }
 
 
+    function floor4_continue() {
+        log("At the far end of the treasury, the final staircase waits. Below it, you can feel heat rising.", "scene");
+
+        renderChoices([
+            {
+                label: "Descend to floor 5",
+                action: () => { player.floor = 5; updateStats(); floor5(); }
+            },
+            {
+                label: "Rest and prepare (+30 HP)",
+                action: () => {
+                    heal(30);
+                    log("You rest on a pile of gold. As far as beds go, it could be worse. HP recovered.", "heal");
+                    updateStats();
+                    renderChoices([{
+                        label: "Descend to floor 5",
+                        action: () => { player.floor = 5; updateStats(); floor5(); }
+                    }]);
+                }
+            }
+        ]);
+    }
 
 
-    ])
-}
+    function floor5() {
+        separator();
+        log("FLOOR 5 - The Dragon's Chamber", "scene");
+        log("The ceiling opens up to something massive. The air is hot. The walls are scorched black.", "scene");
+        log("In the center of the room, something breathes.", "scene");
+        log("It opens one eye.", "scene");
+
+        renderChoices([
+            {
+                label: "Fight the dragon",
+                action: () => {
+                    log("You raise your weapon. The dragon raises its head.", "scene");
+                    startCombat("dragon", gameWin, () => {
+                        log("The dragon watches you flee. It doesn't bother chasing.", "dim");
+                        floor5_flee();
+                    });
+                },
+                danger: true,
+            },
+            {
+                label: "Try to talk to it.",
+                action: () => {
+                    if (player.flags.has("blessed")) {
+                        log("The witch's blessing lingers on your tongue. The words come out in dragonspeak somehow.", "scene");
+                        log("The dragon tilts its head. Then it speaks. It's been down here for three hundred years. It's bored.", "scene");
+                        log("It lets you pass.", "scene");
+                        gameWin();
+                    } else {
+                        log("You open your mouth. The dragon breathes a small flame at your feet as a warning.", "combat");
+                        player.hp -= 15;
+                        updateStats();
+                        log("That went poorly. HP -15.", "combat");
+                        renderChoices([
+                            {
+                                label: "Fight the dragon",
+                                action: () => startCombat("dragon", gameWin, floor5_flee),
+                                danger: true,
+                            },
+                            { label: "Run", action: floor5_flee}
+                        ]);
+                    }
+                }
+            },
+            {
+                label: "Look for another way out",
+                action: () => {
+                    log("You search the walls while the dragon seems amused.", "scene");
+                    log("There is no other way out...There never was.", "dim");
+                    renderChoices([
+                        {
+                            label: "Fight the dragon",
+                            action: () => startCombat("dragon", gameWin, floor5_flee),
+                            danger: true,
+                        }
+                    ]);
+                }
+            }
+            
+        ]);
+    }
+
+
+    function floor5_flee() {
+        log("You run back up the stairs, the dragon stays.", "dim");
+        log("You make it back to floor 4. Maybe you'll try again when you're stronger.", "scene");
+        renderChoices([
+            {
+                label: "Go back down (floor 5)",
+                action: () => floor5()
+            },
+            {
+                label: "Rest on floor 4 (+40 HP)",
+                action: () => {
+                    heal(40);
+                    updateStats();
+                    log("You rest. HP recovered.", "heal");
+                    renderChoices([{ label: "Go back down", action: () => floor5() }])
+                }
+            }
+        ]);
+    }
+
+
+//begin
+
+updateStats();
+floor1();
