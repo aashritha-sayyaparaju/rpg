@@ -440,3 +440,176 @@ function floor2() {
     ]);
 }
 
+function floor2_event() {
+    log("A skeleton patrol rounds the corner.", "scene");
+    startCombat("skeleton",
+        () => {
+            log("The skeleton crumbles to dust. Ahead you see a merchant's lantern.", "scene");
+            openShop(() => {
+                log("The merchant vanishes. The staircase down is clear.", "dim");
+                renderChoices([{
+                    label: "Descend to floor 3",
+                    action: () => { player.floor = 3; updateStats(); floor3(); }
+                }]);
+            });
+        },
+
+        (reason) => {
+            if (reason === "flee") log("You get past the patrol somehow.", "dim");
+            renderChoices([{
+                label: "Descend to floor 3",
+                action: () => { player.floor = 3; updateStats(); floor3(); }
+            }]);
+        }
+    );
+}
+
+
+function floor3() {
+    separator();
+    log("FLOOR 3 - The Warrens", "scene");
+    log("A maze of low tunnels. You have to crouch. The walls are wet.", "scene");
+
+    if (player.flags.has("read_warning")) {
+        log("You remember the note. You keep your weapon ready.", "dim");
+     }
+
+     renderChoices([
+        {
+            label: "Take the left tunnel",
+            action: () => {
+                log("The tunnel opens into a flooded chamber. A troll is sleeping in the corner.", "scene");
+                renderChoices([
+                    {
+                        label: "Sneak past",
+                        action: () => {
+                            const success = Math.random() > 0.35;
+                            if (success) {
+                                log("You hold your breath and slip past. The troll doesn't stir.", "dim");
+                                floor3_continue();
+                            } else {
+                                log("You knock over a loose rock. The troll wakes up furious.", "combat");
+                                startCombat("troll", floor3_continue, floor3_continue);
+                            }
+                        }
+                    },
+                    {
+                        label: "Fight the troll",
+                        action: () => startCombat("troll", floor3_continue, floor3_continue),
+                        danger: true;
+                    }
+                ]);
+            }
+        },
+
+        {
+            label: "Take the right tunnel", 
+            action: () => {
+                log("The tunnel leads to a witch's den. She offers you a deal.", "scene");
+                log("\"Half your gold for a blessing. Take it or leave it.\"", "scene");
+                const cost = Math.floor(player.gold / 2);
+                renderChoices([
+                    {
+                        label: `Pay ${cost} gold for blessing` ,
+                        action: () => {
+                            if (player.gold < 5) {
+                                log("You don't have enough gold. She laughs and disappears.", "dim");
+                                floor3_continue();
+                                return;
+                            }
+                            player.gold -= cost;
+                            player.atk += 4;
+                            player.flags.add("blessed");
+                            updateStats();
+                            log(`You pay ${cost} gold. ATK +4. The witch vanishes.`, "loot");
+                            floor3_continue();
+                        }
+                    },
+                    {
+                        label: "Refuse and fight her",
+                        action: () => startCombat("witch", floor3_continue, floor3_continue),
+                        danger: true;
+                    },
+                    {
+                        label: "Walk away",
+                        action: () => {
+                            log("You ignore her and push through. She curses at you in a language you don't understand.", "dim");
+                            floor3_continue();
+                        }
+                    }
+                ]);
+            }
+        }
+     ]);
+}
+
+
+function floor3_continue() {
+    separator();
+    log("You find the staircase down after what feels like an hour of wandering.", "scene");
+    renderChoices([
+    {
+        renderChoices([
+            {
+                label: "Descend to floor 4",
+                action: () => { player.floor = 4; updateStats(); floor4(); }
+            },
+            {
+                label: "Rest here (+20 HP)",
+                action: () => {
+                    heal(20);
+                    log("You sit in the dark for a while. HP recovered.", "heal");
+                    updateStats();
+                    renderChoices([{
+                        label: "Descend to floor 4",
+                        action: () => { player.floor = 4; updateStats(); floor4(); } 
+                    }]);
+                }
+            }
+        ]);
+    }
+
+
+    function floor4() {
+        separator();
+        log("FLOOR 4 - The Treasury", "scene");
+        log("Gold glints from the walls. Coins are embedded in the stone like decoration. Someone went to a lot of trouble.", "scene");
+        log("There are three rooms branching off the main hall.", "scene");
+
+        renderChoices([
+            {
+                label: "Enter the vault",
+                action: () => {
+                    log("The vault door is heavy but unlocked. Inside: stacks of gold and one goblin who clearly thinks this is his vault.", "scene");
+                    startCombat("goblin",
+                        () => {
+                            const found = rand(30,50);
+                            player.gold += found;
+                            updateStats();
+                            log(`You take ${found} gold from the vault.`, "loot");
+                            floor4_continue();
+                        },
+                        () => floor4_continue()
+                            );
+                }
+            };
+
+            {
+                label: "Enter the shrine",
+                action: () => {
+                    log("A stone altar. On it: a vital of glowing liquid and a pile of ash.", "scene");
+                    renderChoices([
+                        {
+                            label: "Drink the vial",
+                        }
+                    ])
+                }
+            }
+        ])
+    }
+
+
+
+
+    ])
+}
