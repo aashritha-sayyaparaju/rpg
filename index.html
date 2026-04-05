@@ -8,7 +8,23 @@
     </head>
 
     <body>
-        <div id="app">
+        <div id="start-screen">
+            <div id="start-box">
+                <div id="start-title">UNDERLOST</div>
+                <div id="start-sub">a dungeon crawl</div>
+                <div id="start-divider"></div>
+                <div id="how-to-play">
+                    <p>Move through the dungeon by making choices, See if you can get past the 5 floors with only one way out.</p>
+                </div>
+                <div id="start-divider"></div>
+                <div id="name-selection">
+                    <label for="name-input">ENTER YOUR NAME</label>
+                    <input type="text" id="name-input" maxlength="20" placeholder="Adventurer" spellcheck="false" />
+                </div>
+                <button id="start-btn" onclick="startGame()">ENTER THE DUNGEON</button>
+            </div>
+        </div>
+        <div id="app" style="display:none;">
 
             <header>
                 <div id="header-top">
@@ -18,6 +34,7 @@
                         <span id="title-sub">a dungeon crawl</span>
                     </div>
                     <div id="header-right">
+                        <span id="player-name-display"></span>
                         <button id="btn-restart" onclick="location.reload()">↺ Restart</button>
                     </div>
                 </div>

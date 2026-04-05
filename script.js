@@ -9,7 +9,20 @@ const player = {
     floor: 1,
     inventory: [],
     flags: new Set(),
+    name: "Adventurer",
 };
+
+//start
+
+function startGame() {
+    const input = document.getElementById("name-input").value.trim();
+    player.name = input || "Adventurer";
+    document.getElementById("player-name-display").textContent = player.name;
+    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+    updateStats();
+    floor1();
+}
 
 //enemies
 
@@ -298,9 +311,9 @@ function openShop(onLeave) {
 
 function gameOver() {
     separator();
-    log("YOU DIED", "death");
-    log(`You reached floor ${player.floor} with ${player.gold} gold.`, "dim");
-    renderChoices([{ label: "Try Again", action: () => location.reload() }]);
+    log("YOU DIED", "Death");
+    log(`${player.name} - Floor ${player.floor} | ${player.kills} kills | ${player.gold} gold | ATK ${player.atk}`, "dim");
+    renderChoices([{label: "Try Again", action: () => location.reload() }]);
 }
 
 function gameWin() {
@@ -753,7 +766,3 @@ function floor3_continue() {
     }
 
 
-//begin
-
-updateStats();
-floor1();
