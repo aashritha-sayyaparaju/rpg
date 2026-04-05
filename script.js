@@ -225,11 +225,218 @@ function startCombat(enemyKey, onWin, onLose) {
         combatTurn();
     }
 
-        
+        function fleeAction() {
+            const success = Math.random() > 0.4;
+            if (success) {
+                log("You manage to escape!", "dim");
+                separator();
+                onLose("flee");
+            } else {
+                const enemyDmg = rand(enemy.atk, Math.ceil(enemy.atk * 1.5));
+                player.hp -= enemyDmg;
+                log(`You fail to flee. The ${enemy.name} hits you for ${enemyDmg}. HP: ${player.hp}`, "combat");
+                updateStats();
+                if (player.hp <= 0) { loseCombat(); return; }
+                combatTurn();
+            }
+        }
+
+        function winCombat() {
+            const gold = rand(enemy.gold[0], enemy.gold[1]);
+            player.gold += gold;
+            log(`You defeated the ${enemy.name}! +${gold} gold.`, "loot");
+
+            if (enemy.loot && Math.random() < enemy.loot.chance) {
+                const item = enemy.loot;
+                log(`The ${enemy.name} dropped: ${item.name}!`, "loot");
+                if (item.atkBonus) { player.atk += item.atkBonus; log(`ATK +${item.atkBonus}`, "loot");}
+                if (item.hpBonus) { player.maxHp += item.hpBonus; player.hp += item.hpBonus; log(`Max HP +${item.hpBonus}`, "heal");}
+                if (item.healAmount) { heal(item.healAmount); log(`Healed ${item.healAmount} HP.`, "heal");}
+                player.inventory.push(item.name);
+            }
+
+            updateStats();
+            separator();
+            onWin();
+        }
+
+        function loseCombat() {
+            log("Your HP drops to 0.", "combat");
+            gameOver();
+        }
+
+        combatTurn();
+
+}
+
+//shop
+
+function openShop(onLeave) {
+    log("A merchant appears from the shadows. \"Buy something or get out.\"", "scene");
+
+    function showShop() {
+        const affordable = shopItems.filter(i => player.gold >= i.cost && !player.inventory.includes(i.name));
+        const options = affordable.map(item => ({
+            label: `Buy ${item.name} (${item.cost}g)` ,
+            action: () => {
+                player.gold -= item.cost;
+                item.effect();
+                player.inventory.push(item.name);
+                updateStats();
+                showShop();
+            }
+        }));
+        options.push({ label: "Leave shop", action: onLeave });
+        renderChoices(options);
+    }
+
+    showShop();
+
+}
+
+//game over
+
+function gameOver() {
+    separator();
+    log("YOU DIED", "death");
+    log(`You reached floor ${player.floor} with ${player.gold} gold.`, "dim");
+    renderChoices([{ label: "Try Again", action: () => location.reload() }]);
+}
+
+function gameWin() {
+    separator();
+    log("The dragon collapses. Its roar fades to silence.", "scene");
+    log("Light pours in through a crack in the ceiling. You see sky for the first time in what feels like forever.", "scene");
+    log(`UNDERLOST CLEARED`, "death");
+    log(`Floor 5 | ${player.gold} gold | ATK ${player.atk} | HP ${player.hp}/${player.maxHp}`, "dim");
+    renderChoices([{ label: "Play Again", action: () => location.reload() }]);
+}
+
+//floors
+
+function floor1() {
+    separator();
+    log("FLOOR 1 - The Entrance", "scene");
+    log("You wake up at the bottom of a stone staircase. Your torch flickers. The air smells like rot and old copper.", "scene");
+    log("Ahead: a dark corridor. To your left: a wooden door. To your right: sounds of movement.", "scene");
 
 
+    renderChoices([
+        { 
+            label: "Go down the corridor",
+            action: () => {
+                log("The corridor leads to a small chamber. A giant rat guards a chest.", "scene");
+                startCombat("rat",
+                    () => {
+                        log("You pry open the chest. Inside: a dusty health potion.", "loot");
+                        player.inventory.push("Health Potion");
+                        updateStats();
+                        log("You pocket it and move deeper.", "dim");
+                        floor1_continue();
+                    },
+                    (reason) => {
+                        if (reason === "flee") log("You retreat to the entrance.", "dim");
+                        floor1_continue();
+                    }
+                );
+            }
+        },
+
+        {
+            label: "Try the wooden door",
+            action: () => {
+                log("The door opens to a small room. A skeleton sits at a table. On the table: 10 gold and a note.", "scene");
+                log("The note reads: 'Don't go to floor 3 without a weapon. I did. This is where I am now.'", "dim");
+                player.gold += 10;
+                player.flags.add("read_warning");
+                updateStats();
+                log("+10 gold.", "loot");
+                floor1_continue();
+            }
+        },
+        {
+            label: "Investigate the sounds",
+            action: () => {
+                log("Two goblins are arguing over a coin. They notice you.", "scene");
+                startCombat("goblin", 
+                    () => {
+                        log("One goblin fled. You grab the coin they were fighting over.", "loot");
+                        player.gold += 8;
+                        updateStats();
+                        floor1_continue();
+                    },
+                    () => floor1_continue()
+                );
+            }
+        },
+    ]);
+}
+
+function floor1_continue() {
+    log("At the end of the entrance hall, a staircase leads down.", "scene");
+    renderChoices([
+        {
+            label: "Descend to floor 2",
+            action: () => { player.floor = 2; updateStats(); floor2(); }
+        },
+        {
+            label: "Rest here first (+15 HP)",
+            action: () => {
+                heal(15);
+                log("You rest against the wall. HP restored slightly.", "heal");
+                updateStats();
+                renderChoices([{
+                    label: "Descend to floor 2",
+                    action: () => { player.floor = 2; updateStats(); floor2(); }
+                }]);
+            }
+        }
+    ]);
+}
 
 
+function floor2() {
+    separator();
+    log("FLOOR 2 - The Barracks", "scene");
+    log("Rows of broken bunks line the walls. Whatever army lived here is long gone... mostly.", "scene");
+    log("You spot three paths forward.", "scene");
 
+    renderChoices([
+        {
+            label: "Check the armory",
+            action: () => {
+                log("The armory is picked clean except for a cracked shielf. It's better than nothing.", "scene");
+                player.maxHp += 15;
+                player.hp += 15;
+                player.inventory.push("Cracked Shield");
+                updateStats();
+                log("Max HP +15.", "heal");
+                floor2_event();
+            }
+        },
+
+        {
+            label: "Search the bunks",
+            action: () => {
+                const find = Math.random();
+                if (find > 0.5) {
+                    log("Under a mattress you find a small pouch. 18 gold.", "loot");
+                    player.gold += 18;
+                    updateStats();
+                } else {
+                    log("You find nothing but dust and old boot prints.", "dim");
+                }
+                floor2_event();
+            }
+        },
+
+        {
+            label: "Go straight through",
+            action: () => {
+                log("You move quickly. No detours.", "dim");
+                floor2_event();
+            }
+        }
+    ]);
 }
 
