@@ -12,7 +12,7 @@
     --gold: #ffd54f;
     --success: #66bb6a;
     --mono: 'Share Tech Mono', monospace;
-    display: 'Rajhdani', sans-serif;
+    --display: 'Rajdhani', sans-serif;
 }
 
 * {
@@ -59,7 +59,7 @@ body {
 
 header {
     border-bottom: 1px solid var(--border);
-    paddingl 0.6rem 1.2rem;
+    padding: 0.6rem 1.2rem;
     position: relative;
     z-index: 1;
 }
@@ -144,7 +144,7 @@ main::-webkit-scrollbar-thumb {background: var(--border);}
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 0.1em;
-    text-align: cetner;
+    text-align: center;
     padding: 1rem 0;
 }
 
@@ -174,7 +174,7 @@ footer {
 }
 
 #inventory-label {
-    color: var(-accent);
+    color: var(--accent);
     margin-right: 0.4rem;
 }
 
@@ -208,4 +208,104 @@ footer {
 
 #choices button.danger {
     border-color: rgba(239,83,80,0.4);
+    color: var(--danger);
+}
+
+#choices button.danger:hover {
+    background: rgba(239,83,80,0.08);
+    border-color: var(--danger);
+}
+
+#header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+#title-icon {
+    margin-right: 0.4rem;
+    color: var(--accent);
+}
+
+#title-sub {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--dim);
+    letter-spacing: 0.2em;
+    margin-left: 0.8rem;
+    text-transform: lowercase;
+}
+
+#btn-restart {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+
+#btn-restart:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+#stats-bar {
+    display: flex;
+    gap: 1.8rem;
+    align-items: flex-end;
+}
+
+.stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 0.58rem;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+}
+
+.stat-value {
+    font-size: 0.82rem;
+    color: var(--text);
+}
+
+#hp-bar-wrap {
+    width: 100px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 3px;
+}
+
+#hp-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--success);
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+#footer-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+
+#footer-hint {
+    font-size: 0.62rem;
+    color: var(--dim);
+    letter-spacing: 0.03em;
+    opacity: 0.6;
 }
