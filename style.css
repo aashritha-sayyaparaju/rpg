@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+
+:root {
+    --bg: #09090e;
+    --panel: #0f0f1a;
+    --border: #1e1e3a;
+    --text: #c8d0e0;
+    --dim: #5a6070;
+    --accent: #4fc3f7;
+    --danger: #ef5350;
+    --gold: #ffd54f;
+    --success: #66bb6a;
+    --mono: 'Share Tech Mono', monospace;
+    --display: 'Rajdhani', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+#app {
+    width: 720px;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    position: relative;
+}
+
+#app::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.012) 2px,
+        rgba(255,255,255,0.012) 4px
+    );
+    pointer-events: none;
+    z-index:0;
+}
+
+header {
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+#title-bar {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+}
+
+#stats-bar {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.72rem;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+}
+
+#stats-bar span span {
+    color: var(--text);
+    margin-left: 4px;
+}
+
+#stat-hp { color: var(--success); }
+
+main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem 1.4rem;
+    position: relative;
+    z-index: 1;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
+main::-webkit-scrollbar {width: 4px;}
+main::-webkit-scrollbar-thumb {background: var(--border);}
+
+#log {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.log-entry {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text);
+    animation: fadein 0.25s ease;
+}
+
+.log-entry.scene {
+    color: var(--text);
+    border-left: 2px solid var(--accent);
+    padding-left: 0.8rem;
+    margin-top: 0.5rem;
+}
+
+.log-entry.combat {
+    color: var(--danger);
+}
+
+.log-entry.loot {
+    color: var(--gold);
+}
+
+.log-entry.heal {
+    color: var(--success);
+}
+
+.log-entry.dim {
+    color: var(--dim);
+    font-size: 0.78rem;
+}
+
+.log-entry.death {
+    color: var(--danger);
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.log-separator {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0.5rem 0;
+}
+
+@keyframes fadein {
+    from { opacity: 0; transform: translateY(4px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+footer {
+    border-top: 1px solid var(--border);
+    padding: 0.7rem 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+#inventory-bar {
+    font-size: 0.7rem;
+    color: var(--dim);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.04em;
+}
+
+#inventory-label {
+    color: var(--accent);
+    margin-right: 0.4rem;
+}
+
+#inventory-items {
+    color: var(--gold);
+}
+
+#choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+#choices button {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+#choices button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(79,195,247,0.06);
+}
+
+#choices button.danger {
+    border-color: rgba(239,83,80,0.4);
+    color: var(--danger);
+}
+
+#choices button.danger:hover {
+    background: rgba(239,83,80,0.08);
+    border-color: var(--danger);
+}
+
+#header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+#title-icon {
+    margin-right: 0.4rem;
+    color: var(--accent);
+}
+
+#title-sub {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--dim);
+    letter-spacing: 0.2em;
+    margin-left: 0.8rem;
+    text-transform: lowercase;
+}
+
+#btn-restart {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+
+#btn-restart:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+#stats-bar {
+    display: flex;
+    gap: 1.8rem;
+    align-items: flex-end;
+}
+
+.stat-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 0.58rem;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+}
+
+.stat-value {
+    font-size: 0.82rem;
+    color: var(--text);
+}
+
+#hp-bar-wrap {
+    width: 100px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 3px;
+}
+
+#hp-bar {
+    height: 100%;
+    width: 100%;
+    background: var(--success);
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+#footer-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+
+#footer-hint {
+    font-size: 0.62rem;
+    color: var(--dim);
+    letter-spacing: 0.03em;
+    opacity: 0.6;
+}

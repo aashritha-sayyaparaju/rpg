@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>UNDERLOST</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <div id="start-screen">
+            <div id="start-box">
+                <div id="start-title">UNDERLOST</div>
+                <div id="start-sub">a dungeon crawl</div>
+                <div id="start-divider"></div>
+                <div id="how-to-play">
+                    <p>Move through the dungeon by making choices, See if you can get past the 5 floors with only one way out.</p>
+                </div>
+                <div id="start-divider"></div>
+                <div id="name-selection">
+                    <label for="name-input">ENTER YOUR NAME</label>
+                    <input type="text" id="name-input" maxlength="20" placeholder="Adventurer" spellcheck="false" />
+                </div>
+                <button id="start-btn" onclick="startGame()">ENTER THE DUNGEON</button>
+            </div>
+        </div>
+        <div id="app" style="display:none;">
+
+            <header>
+                <div id="header-top">
+                    <div id="title-bar">
+                        <span id="title-icon">⚔</span>
+                        UNDERLOST
+                        <span id="title-sub">a dungeon crawl</span>
+                    </div>
+                    <div id="header-right">
+                        <span id="player-name-display"></span>
+                        <button id="btn-restart" onclick="location.reload()">↺ Restart</button>
+                    </div>
+                </div>
+
+                <div id="stats-bar">
+                    <div class="stat-block">
+                        <span class="stat-label">HP</span>
+                        <span class="stat-value"><span id="stat-hp">100</span> / <span id="stat-maxhp">100</span></span>
+                        <div id="hp-bar-wrap"><div id="hp-bar"></div></div>
+                    </div>
+                    <div class="stat-block">
+                        <span class="stat-label">ATK</span>
+                        <span class="stat-value" id="stat-atk">8</span>
+                    </div>
+                    <div class="stat-block">
+                        <span class="stat-label">GOLD</span>
+                        <span class="stat-value" id="stat-gold">0</span>
+                    </div>
+                    <div class="stat-block">
+                        <span class="stat-label">FLOOR</span>
+                        <span class="stat-value" id="stat-floor">1</span> / 5
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <div id="log"></div>
+            </main>
+
+            <footer>
+            <div id="inventory-bar">
+             <span id="inventory-label">INVENTORY</span>
+            <span id="inventory-items">empty</span>
+            </div>
+            <div id="choices"></div>
+            <div id="footer-hint">click dialogue to skip * flee has a 60% success rate</div>
+            </footer>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
