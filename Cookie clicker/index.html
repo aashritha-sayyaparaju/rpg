@@ -1,3 +1,47 @@
-!<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
 
 
+        <div id="topbar">
+            <div id="pearl-count">0🧋</div>
+            <div id="per-sec-display">0 pearls/sec</div>
+        </div>
+
+        <div id="layout">
+            <aside id="shop">
+                <h2>shop</h2>
+                <div id="upgrades-list"></div>
+            </aside>
+
+            <main id="main">
+                <div id="boba-wrap">
+                    <div id="boba">🧋</div>
+                </div>
+                <div id="click-label">tap the boba</div>
+            </main>
+
+            <aside id="stats">
+                <h2>stats</h2>
+                <div class="stat-row"><span>total pearls</span><span id="stat-total">0</span></div>
+                <div class="stat-row"><span>total clicks</span><span id="stat-clicks">0</span></div>
+                <div class="stat-row"><span>per click</span><span id="stat-perclick">0</span></div>
+                <div class="stat-row"><span>per second</span><span id="stat-persec">0</span></div>
+                <div id="milestones">
+                    <h2>milestones</h2>
+                    <div id="milestones"></div>
+                </div>
+            </aside >
+        </div>
+
+        
+        </div>
+        <script src="script.js"></script>
+    </body>
+    </html>
